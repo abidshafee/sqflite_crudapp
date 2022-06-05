@@ -63,3 +63,11 @@ class customTxtFlf extends StatelessWidget {
     );
   }
 }
+
+class TextFieldItems {
+  final int? id;
+  final String name;
+  final String address;
+
+  TextFieldItems({this.id, required this.name, required this.address});
+}
