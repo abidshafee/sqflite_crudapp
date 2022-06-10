@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 
 main() => runApp(SqfliteCrudApp());
@@ -70,4 +72,34 @@ class TextFieldItems {
   final String address;
 
   TextFieldItems({this.id, required this.name, required this.address});
+
+  factory TextFieldItems.fromMap(Map<String, dynamic> json) =>
+      new TextFieldItems(
+          id: json['id'], name: json['name'], address: json['address']);
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'name': name,
+      'address': address,
+    };
+  }
+}
+
+class DatabaseHelper {
+  DatabaseHelper._privateConstructor();
+  static final DatabaseHelper instance = DatabaseHelper._privateConstructor();
+
+  static Database? _database;
+  Future<Database> get database async => _database ??= await _initDatabase();
+
+  Future<Database> _initDatabase() async {
+    Dictionary documentsDirectory = await getApplicationDocumentsDirectory();
+    String path = join(documentsDirectory.path, 'peoples.db'),
+    return await openDatabase(
+      path,
+      version: 1,
+      onCreate: _onCreate,
+    );
+  }
 }
