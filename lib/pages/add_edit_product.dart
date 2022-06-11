@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:snippet_coder_utils/FormHelper.dart';
 import 'package:sqflite_crudapp/models/products_model.dart';
+import 'package:sqflite_crudapp/services/db_services.dart';
 
 class AddEditProductPage extends StatefulWidget {
   const AddEditProductPage({Key? key, this.model, this.isEditMode = false})
@@ -16,11 +17,17 @@ class _AddEditProductPageState extends State<AddEditProductPage> {
   GlobalKey<FormState> globalKey = GlobalKey<FormState>();
   late ProductModel model;
   List<dynamic> categories = [];
+  late DBService dbService;
 
   @override
   void initState() {
     super.initState();
+    dbService = DBService();
     model = ProductModel(productName: "", categoryId: -1);
+
+    if (widget.isEditMode) {
+      model = widget.model!;
+    }
 
     categories.add({"id": "1", "name": "T-Shirt"});
     categories.add({"id": "2", "name": "Shirt"});
@@ -48,7 +55,39 @@ class _AddEditProductPageState extends State<AddEditProductPage> {
           children: [
             FormHelper.submitButton(
               "Save",
-              () {},
+              () {
+                if (validateAndSave()) {
+                  if (widget.isEditMode) {
+                    dbService.updateProduct(model).then(
+                      (value) {
+                        FormHelper.showSimpleAlertDialog(
+                          context,
+                          "SQFLITE",
+                          "Data Modified Successfully",
+                          "OK",
+                          () {
+                            Navigator.pop(context);
+                          },
+                        );
+                      },
+                    );
+                  } else {
+                    dbService.addProduct(model).then(
+                      (value) {
+                        FormHelper.showSimpleAlertDialog(
+                          context,
+                          "SQFLITE",
+                          "Data Added Successfully",
+                          "OK",
+                          () {
+                            Navigator.pop(context);
+                          },
+                        );
+                      },
+                    );
+                  }
+                }
+              },
               borderRadius: 10,
               btnColor: Colors.green,
               borderColor: Colors.greenAccent,
@@ -135,7 +174,9 @@ class _AddEditProductPageState extends State<AddEditProductPage> {
                     "--Select Category--",
                     model.categoryId,
                     categories,
-                    (onChanged) {},
+                    (onChanged) {
+                      model.categoryId = int.parse(onChanged);
+                    },
                     (onValidate) {},
                     borderRadius: 10,
                     labelFontSize: 14,
@@ -178,5 +219,14 @@ class _AddEditProductPageState extends State<AddEditProductPage> {
         ],
       ),
     );
+  }
+
+  bool validateAndSave() {
+    final form = globalKey.currentState;
+    if (form!.validate()) {
+      form.save();
+      return true;
+    }
+    return false;
   }
 }

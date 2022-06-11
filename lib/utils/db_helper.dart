@@ -1,5 +1,6 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_crudapp/models/model.dart';
+import 'package:path/path.dart' as p;
 
 abstract class DBHelper {
   static Database? _db;
@@ -23,7 +24,7 @@ abstract class DBHelper {
 
   static void onCreate(Database db, int version) async {
     String sqlQuery =
-        'CREATE TABLE products (id INTEGER PRIMARY KEY AUTOINCREMENT, productName STRING, categoryId INTEGER, productDesc STRING, price REAL, productPic STRING)';
+        'CREATE TABLE products (id INTEGER PRIMARY KEY AUTOINCREMENT, productName STRING, categoryId INTEGER, productDesc STRING, price REAL)';
     await db.execute(sqlQuery);
   }
 
