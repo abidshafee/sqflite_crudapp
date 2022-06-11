@@ -40,6 +40,29 @@ class _AddEditProductPageState extends State<AddEditProductPage> {
         key: globalKey,
         child: _formUI(),
       ),
+      bottomNavigationBar: SizedBox(
+        height: 110,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            FormHelper.submitButton(
+              "Save",
+              () {},
+              borderRadius: 10,
+              btnColor: Colors.green,
+              borderColor: Colors.greenAccent,
+            ),
+            FormHelper.submitButton(
+              "Cancel",
+              () {},
+              borderRadius: 10,
+              btnColor: Colors.red,
+              borderColor: Colors.redAccent,
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -124,7 +147,34 @@ class _AddEditProductPageState extends State<AddEditProductPage> {
                     prefixIconPaddingLeft: 10,
                   )),
             ],
-          )
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          FormHelper.inputFieldWidgetWithLabel(
+            context,
+            "productDesc",
+            "Product Description",
+            "",
+            (onValidate) {
+              if (onValidate.isEmpty) {
+                return "* Required";
+              }
+              return null;
+            },
+            (onSaved) {
+              model.productDesc = onSaved.toString().trim();
+            },
+            initialValue: model.productDesc ?? "",
+            borderRadius: 10,
+            contentPadding: 15,
+            fontSize: 14,
+            paddingLeft: 0,
+            paddingRight: 0,
+            prefixIconPaddingLeft: 10,
+            isMultiline: true,
+            multilineRows: 5,
+          ),
         ],
       ),
     );
